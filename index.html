@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="fabric.min.js" defer></script>
+    <script src="template.js" defer></script>
+    <script src="script.js" defer></script>
+    <title>GLUTZEN</title>
+</head>
+
+<body>
+    <div class="container">
+
+        <div class="header">
+            <input type="color" id="color" name="color" onchange="updateColor()" value="#111111">
+            <button onclick="addRect()">Rectangle</button>
+            <button onclick="addCircle()">Circle</button>
+            <button onclick="addTriangle()">Triangle</button>
+            <button onclick="removeObj()">Delete</button>
+            <canvas id="c" width="500" height="500" style="border:1px solid #ccc"></canvas>
+            <button id ="btn-code" onclick="printPos()">Code</button>
+        </div>
+        <div class="code-seg">
+            <textarea id="gcode" autocorrect="off" autocapitalize="none" spellcheck="false"
+                tabindex="0"></textarea>
+        </div>
+    </div>
+</body>
+
+</html>
