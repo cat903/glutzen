@@ -4,7 +4,7 @@
 # How To Use
 - Draw Shape in Canvas
 - Generate Code
-- Copy & Paste To Your Glut Enabled IDE
+- Copy & Paste Generated Code To Your Glut Enabled IDE
 - Build & Run
  
 ![HowtoUse](https://github.com/cat903/glutzen/blob/main/howto.gif)
