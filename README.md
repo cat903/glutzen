@@ -10,7 +10,7 @@
 ![HowtoUse](https://github.com/cat903/glutzen/blob/main/howto.gif)
 
 # To-Do
-- [X] Show Coordinates
+- [X] ``Show Coordinates``
 - [ ] Add Polygon
 - [ ] Add Line
 - [ ] Add Line Loop
