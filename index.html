@@ -17,10 +17,12 @@
 
         <div class="header">
             <input type="color" id="color" name="color" onchange="updateColor()" value="#111111">
+            <input type="color" id="color_x" name="color" onchange="updateColor_two()" value="#111111">
             <button onclick="addRect()">Rectangle</button>
             <button onclick="addCircle()">Circle</button>
             <button onclick="addTriangle()">Triangle</button>
             <button onclick="removeObj()">Delete</button>
+            <div class="axis" style="height: 80px;"></div>
             <canvas id="c" width="500" height="500" style="border:1px solid #ccc"></canvas>
             <button id ="btn-code" onclick="printPos()">Code</button>
         </div>
