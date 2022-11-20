@@ -14,3 +14,6 @@
 - [ ] Add Polygon
 - [ ] Add Line
 - [ ] Add Line Loop
+
+# Known-Bugs
+- Not Supported in Safari
