@@ -5,7 +5,7 @@ body {
 }
 
 .code-seg{
-  margin-top: 2.5rem;
+  margin-top: 7.2rem;
 }
 
 button {
@@ -20,7 +20,7 @@ button {
   border-color: #1D1E22;
 }
 
-#color {
+#color,#color_x {
 
   font-weight: bold;
   font-family: 'Fira Code';
