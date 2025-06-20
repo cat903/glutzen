@@ -431,7 +431,7 @@ function genCircle(circle) {
     colorState = processedColor;
     code += genGlcolor(processedColor);
   }
-  
+
   var xr = parseFloat(circle.radius);
   var yr = parseFloat(circle.radius);
 
