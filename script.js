@@ -35,8 +35,6 @@ function updateColor_two() {
   for (idx in objX) {
     if (objX[idx].id == element.id) {
       if (element.type === 'line' || element.customType === 'lineLoop') {
-        // Gradient for lines/lineloops is not straightforward with current glColor3f approach.
-        // For now, set stroke to the first color for simplicity.
         element.set("stroke", clOne);
       } else {
         element.set("fill",new fabric.Gradient({
@@ -50,9 +48,8 @@ function updateColor_two() {
       }));
     }
   }
-
   canvas.renderAll();
-  canvas.requestRenderAll();
+  canvas.requestRenderAll();}
 }
 
 function addRect() {
@@ -165,27 +162,7 @@ function addLine() {
   });
   line.on("mousemove", () => {
     if (isMousedown) {
-      // For a line, points are (x1, y1) and (x2, y2)
-      // fabric.Line has properties x1, y1, x2, y2 relative to its left/top position
-      // To get absolute canvas coordinates, we need to add its left/top
-      // However, line.lineCoords provides tl, tr, bl, br which might be simpler for consistency
-      // For a simple line, tl is (x1,y1) and br is (x2,y2) if not rotated.
-      // If rotated or scaled, these might represent the bounding box.
-      // Let's use the direct properties and adjust by line's left/top for now.
-      // More robust: use oCoords after object modification.
-      // For simplicity and consistency with other shapes, let's try to use lineCoords.
-      // For a non-scaled, non-rotated line, tl and br should give the endpoints.
-      // line.get('x1'), line.get('y1'), line.get('x2'), line.get('y2') are relative to center of object
-      // Let's use its own coordinates, and add its current position (left, top)
-      // No, fabric lines are defined by an array [x1, y1, x2, y2] and a left/top position.
-      // The points in the array are relative to the left/top of the line object itself.
-      // So, absolute x1 is line.left + line.x1, absolute y1 is line.top + line.y1
-      // and absolute x2 is line.left + line.x2, absolute y2 is line.top + line.y2.
-      // Let's test with lineCoords first as it's used by other shapes.
-      // lineCoords.tl, .tr, .bl, .br define the bounding box of the line.
-      // For a straight unrotated line, tl=(x1,y1) and br=(x2,y2) might work if x1<x2, y1<y2.
-      // Let's use the point array and transform them.
-      const p = line.calcLinePoints(); // This gives {x1, y1, x2, y2} in canvas coords
+      const p = line.calcLinePoints();
       document.querySelector(
         ".axis"
       ).innerText = `P1:(${p.x1.toFixed(2)}, ${p.y1.toFixed(
@@ -286,25 +263,20 @@ function addTriangle() {
 }
 
 function addLineLoop() {
-  // Predefined points for a square line loop
   var points = [
     { x: 0, y: 0 },
     { x: 100, y: 0 },
     { x: 100, y: 100 },
     { x: 0, y: 100 },
   ];
-  // For LineLoop, we use fabric.Polygon but style it as a loop
   var lineLoop = new fabric.Polygon(points, {
     id: oid++,
     left: 200,
     top: 150,
-    fill: 'transparent', // No fill for a line loop
-    stroke: colorChooser.value, // Stroke color from chooser
+    fill: 'transparent',
+    stroke: colorChooser.value,
     strokeWidth: 2,
-    objectCaching: false, // May help with rendering updates for non-filled objects
-    // A custom type property to distinguish from filled polygons if needed later
-    // For now, we rely on fill === 'transparent' and having a stroke.
-    // Or, more robustly, add a custom type:
+    objectCaching: false, 
     customType: 'lineLoop'
   });
   objX.push(lineLoop);
@@ -417,17 +389,13 @@ function genLineLoop(lineLoop) {
 }
 
 function genLine(line) {
-  // Lines in fabric.js use 'stroke' for color, not 'fill'
-  // The genGlcolor function expects a hex color code like '#RRGGBB'
-  // The colorChooser.value provides this.
-  // For lines, we should use line.stroke
-  var color = line.stroke; // Use stroke color
+  var color = line.stroke;
   if (color != colorState) {
     colorState = color;
     code += genGlcolor(color);
   }
 
-  const p = line.calcLinePoints(); // Gets actual line endpoint coordinates
+  const p = line.calcLinePoints();
 
   code += "\tglBegin(GL_LINES);\n";
   code += `\t\tglVertex2f(${p.x1.toFixed(2)}f,${p.y1.toFixed(2)}f);\n`;
@@ -438,14 +406,12 @@ function genLine(line) {
 function genPolygon(polygon) {
   var color = polygon.fill;
 
-  // If the fill is a Fabric gradient object, use its first color stop.
   if (typeof color === 'object' && color.type === 'gradient' && color.colorStops.length > 0) {
     processedColor = color.colorStops[0].color;
   } else {
-    processedColor = color; // It's a simple color string or not a recognized gradient
+    processedColor = color;
   }
 
-  // Set color if it has changed from the last set color state
   if (processedColor != colorState) {
     colorState = processedColor;
     code += genGlcolor(processedColor);
