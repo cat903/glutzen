@@ -48,6 +48,7 @@ function updateColor_two() {
       }));
     }
   }
+}
   canvas.renderAll();
   canvas.requestRenderAll();
 }
@@ -505,5 +506,4 @@ function genGlcolor(colorCode) {
     );
   }
   return `glColor3f(${vals[0]}f,${vals[1]}f,${vals[2]}f);\n`;
-}
 }
