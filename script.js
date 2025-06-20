@@ -49,7 +49,7 @@ function updateColor_two() {
     }
   }
   canvas.renderAll();
-  canvas.requestRenderAll();}
+  canvas.requestRenderAll();
 }
 
 function addRect() {
@@ -95,7 +95,6 @@ function addRect() {
 }
 
 function addPolygon() {
-  // Predefined points for a pentagon
   var points = [
     { x: 50, y: 0 },
     { x: 100, y: 40 },
@@ -108,9 +107,8 @@ function addPolygon() {
     left: 150,
     top: 50,
     fill: colorChooser.value,
-    strokeWidth: 0, // Polygons are typically filled, not stroked by default
-    stroke: 'transparent', // Explicitly set stroke to transparent or a color
-    // per object for polygons often means edge color
+    strokeWidth: 0,
+    stroke: 'transparent',
   });
   objX.push(polygon);
   canvas.add(polygon);
@@ -125,10 +123,6 @@ function addPolygon() {
   polygon.on("mousemove", () => {
     if (isMousedown) {
       let coordsStr = "Polygon Vertices:\n";
-      // fabric.Polygon points are relative to the object's center.
-      // To get canvas coordinates, we need to transform them.
-      // polygon.oCoords provides bounding box coordinates.
-      // For actual vertices: iterate polygon.points and apply object's transformation matrix.
       const matrix = polygon.calcTransformMatrix();
       polygon.points.forEach((p, i) => {
         const transformedP = fabric.util.transformPoint(p, matrix);
@@ -146,9 +140,9 @@ function addLine() {
     id: oid++,
     left: 50,
     top: 100,
-    stroke: colorChooser.value, // Correctly use chooser value
+    stroke: colorChooser.value,
     strokeWidth: 2,
-    fill: null, // Lines don't have a fill
+    fill: null,
   });
   objX.push(line);
   canvas.add(line);
@@ -214,7 +208,7 @@ function addCircle() {
           ".axis"
         ).innerText = `CX:${cx.toFixed(2)}\nCY:${cy.toFixed(2)}\nXR:${xr.toFixed(
           2
-        )}\nYR:${yr.toFixed(2)}`     
+        )}\nYR:${yr.toFixed(2)}`
     }
   });
 }
@@ -276,7 +270,7 @@ function addLineLoop() {
     fill: 'transparent',
     stroke: colorChooser.value,
     strokeWidth: 2,
-    objectCaching: false, 
+    objectCaching: false,
     customType: 'lineLoop'
   });
   objX.push(lineLoop);
@@ -336,9 +330,9 @@ function printPos() {
       genTriangle(obj);
     } else if (obj.type == "line") {
       genLine(obj);
-    } else if (obj.type == "polygon" && obj.customType !== 'lineLoop') { // Standard polygon
+    } else if (obj.type == "polygon" && obj.customType !== 'lineLoop') {
       genPolygon(obj);
-    } else if (obj.customType === 'lineLoop') { // Line loop
+    } else if (obj.customType === 'lineLoop') {
       genLineLoop(obj);
     }
   }
@@ -372,7 +366,6 @@ function genRect(rect) {
 }
 
 function genLineLoop(lineLoop) {
-  // Line loops use stroke for color
   var color = lineLoop.stroke;
   if (color != colorState) {
     colorState = color;
@@ -426,12 +419,19 @@ function genPolygon(polygon) {
   code += "\tglEnd();\n";
 }
 
-function genLine(line) {
+function genCircle(circle) {
   var color = circle.fill;
-  if (color != colorState) {
-    colorState = color;
-    code += genGlcolor(color);
+  if (typeof color === 'object' && color.type === 'gradient' && color.colorStops.length > 0) {
+    processedColor = color.colorStops[0].color;
+  } else {
+    processedColor = color;
   }
+
+  if (processedColor != colorState) {
+    colorState = processedColor;
+    code += genGlcolor(processedColor);
+  }
+  
   var xr = parseFloat(circle.radius);
   var yr = parseFloat(circle.radius);
 
@@ -448,17 +448,17 @@ function genLine(line) {
     (parseFloat(circle.lineCoords.tr.y) + parseFloat(circle.lineCoords.bl.y)) /
     2;
 
-  if (circle.angle != undefined) {
+  if (circle.angle != 0 && circle.angle != undefined) {
     code += `
     \tglPushMatrix();
-    \tglTranslatef(${cx}f,${cy}f,0.0f);
-    \tglRotatef(${circle.angle},0,0,1);
+    \tglTranslatef(${cx.toFixed(2)}f,${cy.toFixed(2)}f,0.0f);
+    \tglRotatef(${circle.angle.toFixed(2)},0,0,1);
     `;
 
-    code += `\tdispFilledelipse(0,0,${xr},${yr});\n`;
+    code += `\tdispFilledelipse(0,0,${xr.toFixed(2)},${yr.toFixed(2)});\n`;
     code += `\tglPopMatrix();\n`;
   } else {
-    code += `\tdispFilledelipse(${cx},${cy},${xr},${yr});\n`;
+    code += `\tdispFilledelipse(${cx.toFixed(2)},${cy.toFixed(2)},${xr.toFixed(2)},${yr.toFixed(2)});\n`;
   }
 }
 
